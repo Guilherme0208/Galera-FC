@@ -1,0 +1,43 @@
+{% extends 'financeiro/base.html' %}
+
+{% block title %}
+Configurações | Galera FC
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+   <span>Sistema</span>
+   <h1>Configurações</h1>
+   <p>Defina os padrões do grupo e da lista do rachão.</p>
+</div>
+
+<div class="section">
+   <form method="post" class="form">
+      {% csrf_token %}
+
+      <label>Nome do Grupo</label>
+      {{ form.nome_grupo }}
+
+      <label>Valor Padrão da Diária</label>
+      {{ form.valor_diaria_padrao }}
+
+      <label>Limite da Lista Principal</label>
+      {{ form.limite_lista_principal }}
+
+      <label>Limite de Goleiros</label>
+      {{ form.limite_goleiros }}
+
+      <label>Limite de Reservas de Casa</label>
+      {{ form.limite_reservas_casa }}
+
+      <label>Limite de Reservas Visitantes</label>
+      {{ form.limite_reservas_visitantes }}
+
+      <button type="submit" class="btn-primary">
+         Salvar Configurações
+      </button>
+   </form>
+</div>
+
+{% endblock %}

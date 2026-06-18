@@ -1,0 +1,156 @@
+{% extends 'financeiro/base.html' %}
+
+{% block title %}
+Pagamentos | Galera FC
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+   <span>Financeiro</span>
+   <h1>Histórico de Pagamentos</h1>
+   <p>Registro das formas de pagamento realizadas pelos jogadores.</p>
+</div>
+
+<div class="cards">
+
+   <div class="card highlight">
+      <span>Total Recebido</span>
+      <strong>
+         R$ {{ total_recebido }}
+      </strong>
+   </div>
+
+   <div class="card">
+      <span>PIX</span>
+      <strong>
+         R$ {{ total_pix }}
+      </strong>
+   </div>
+
+   <div class="card">
+      <span>Dinheiro</span>
+      <strong>
+         R$ {{ total_dinheiro }}
+      </strong>
+   </div>
+
+   <div class="card">
+      <span>Cartão</span>
+      <strong>
+         R$ {{ total_cartao }}
+      </strong>
+   </div>
+
+</div>
+
+<div class="section">
+   <div class="section-header">
+      <h2>Pagamentos Registrados</h2>
+   </div>
+
+   <div class="section">
+
+   <form method="get" class="form">
+
+      <label>Jogador</label>
+
+      <input
+         type="text"
+         name="jogador"
+         value="{{ request.GET.jogador }}"
+      >
+
+      <label>Forma de Pagamento</label>
+
+      <select name="forma">
+
+         <option value="">
+            Todas
+         </option>
+
+         <option value="PIX">
+            PIX
+         </option>
+
+         <option value="DINHEIRO">
+            Dinheiro
+         </option>
+
+         <option value="CARTAO">
+            Cartão
+         </option>
+
+      </select>
+
+      <button
+         type="submit"
+         class="btn-primary"
+      >
+         Filtrar
+      </button>
+
+   </form>
+
+</div>
+
+   <table class="table">
+      <thead>
+         <tr>
+            <th>Data</th>
+            <th>Jogador</th>
+            <th>Referência</th>
+            <th>Valor</th>
+            <th>Forma</th>
+            <th>Status</th>
+            <th>Observação</th>
+         </tr>
+      </thead>
+
+      <tbody>
+         {% for pagamento in pagamentos %}
+         <tr>
+            <td>
+               {% if pagamento.data_pagamento %}
+                  {{ pagamento.data_pagamento|date:"d/m/Y" }}
+               {% else %}
+                  -
+               {% endif %}
+            </td>
+
+            <td>
+               <strong>{{ pagamento.jogador.nome }}</strong>
+            </td>
+
+            <td>{{ pagamento.referencia }}</td>
+
+            <td class="money-positive">
+               R$ {{ pagamento.valor }}
+            </td>
+
+            <td>
+               {{ pagamento.get_forma_pagamento_display }}
+            </td>
+
+            <td>
+               {% if pagamento.status == 'PAGO' %}
+                  <span class="badge-success">Pago</span>
+               {% else %}
+                  <span class="badge-danger">Pendente</span>
+               {% endif %}
+            </td>
+
+            <td>{{ pagamento.observacao }}</td>
+         </tr>
+         {% empty %}
+         <tr>
+            <td colspan="7" class="empty">
+               Nenhum pagamento registrado.
+            </td>
+         </tr>
+         {% endfor %}
+      </tbody>
+   </table>
+</div>
+
+{% endblock %}

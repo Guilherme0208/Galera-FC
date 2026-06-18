@@ -1,0 +1,142 @@
+{% extends 'financeiro/base.html' %}
+
+{% block title %}
+Dashboard | Galera FC
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+   <span>Dashboard</span>
+   <h1>Resumo Financeiro</h1>
+   <p>Controle de jogadores, receitas, despesas e saldo do grupo.</p>
+</div>
+
+<div class="cards">
+
+   <div class="card">
+      <span>Total de Jogadores</span>
+      <strong>{{ total_jogadores }}</strong>
+   </div>
+
+   <div class="card">
+      <span>Mensalistas</span>
+      <strong>{{ mensalistas }}</strong>
+   </div>
+
+   <div class="card">
+      <span>Diaristas</span>
+      <strong>{{ diaristas }}</strong>
+   </div>
+
+   <div class="card">
+      <span>Visitantes</span>
+      <strong>{{ visitantes }}</strong>
+   </div>
+
+   <div class="card">
+      <span>Receita Recebida</span>
+      <strong class="money-positive">
+         R$ {{ receita_recebida }}
+      </strong>
+   </div>
+
+   <div class="card">
+      <span>Total Pendente</span>
+      <strong class="money-negative">
+         R$ {{ total_pendente }}
+      </strong>
+   </div>
+
+   <div class="card">
+      <span>Pendências</span>
+      <strong>
+         {{ quantidade_pendencias }}
+      </strong>
+   </div>
+
+   <div class="card">
+      <span>Despesas</span>
+      <strong class="money-negative">
+         R$ {{ despesas }}
+      </strong>
+   </div>
+
+   <div class="card highlight">
+      <span>Saldo Geral</span>
+      <strong
+         {% if saldo_geral < 0 %}
+            class="money-negative"
+         {% else %}
+            class="money-positive"
+         {% endif %}
+         >
+            R$ {{ saldo_geral }}
+      </strong>
+   </div>
+
+</div>
+
+<div class="section">
+   <h2>Próxima Pelada</h2>
+
+   {% if proxima_pelada %}
+      <p>
+         {{ proxima_pelada.data|date:"d/m/Y" }}
+
+         {% if proxima_pelada.horario %}
+            às {{ proxima_pelada.horario }}
+         {% endif %}
+
+         {% if proxima_pelada.local %}
+            - {{ proxima_pelada.local }}
+         {% endif %}
+      </p>
+   {% else %}
+      <p class="empty">Nenhuma pelada cadastrada.</p>
+   {% endif %}
+</div>
+
+<div class="section">
+   <div class="section-header">
+      <h2>Status Financeiro</h2>
+   </div>
+
+   <canvas id="financeChart"></canvas>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+const ctx = document.getElementById('financeChart');
+
+   new Chart(ctx, {
+      type: 'doughnut',
+
+      data: {
+         labels: [
+            'Pagos',
+            'Pendentes'
+         ],
+
+         datasets: [{
+            data: [
+               {{ recebidos }},
+               {{ pendentes }}
+            ]
+         }]
+      },
+
+      options: {
+         responsive: true,
+         plugins: {
+            legend: {
+               labels: {
+                  color: 'white'
+               }
+            }
+         }
+      }
+   });
+</script>
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends 'financeiro/base.html' %}
+
+{% block title %}
+Registrar Pagamento
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+   <span>Financeiro</span>
+   <h1>Registrar Pagamento</h1>
+
+   <p>
+      {{ presenca.jogador.nome }}
+   </p>
+</div>
+
+<div class="section">
+
+   <div class="card">
+      <span>Valor</span>
+      <strong>
+         R$ {{ presenca.valor_cobrado }}
+      </strong>
+   </div>
+
+   <form method="post" class="form">
+
+      {% csrf_token %}
+
+      <label>Forma de Pagamento</label>
+      {{ form.forma_pagamento }}
+
+      <label>Data do Pagamento</label>
+      {{ form.data_pagamento }}
+
+      <label>Observação</label>
+      {{ form.observacao }}
+
+      <button type="submit" class="btn-primary">
+         Confirmar Pagamento
+      </button>
+
+   </form>
+
+</div>
+
+{% endblock %}

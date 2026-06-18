@@ -1,0 +1,44 @@
+{% extends 'financeiro/base.html' %}
+
+{% block title %}
+Despesa | Galera FC
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+   <span>Financeiro</span>
+   <h1>Cadastro de Despesa</h1>
+   <p>Cadastre ou edite uma despesa.</p>
+</div>
+
+<div class="section">
+
+   <form method="post" class="form">
+
+      {% csrf_token %}
+
+      <label>Descrição</label>
+      {{ form.descricao }}
+
+      <label>Categoria</label>
+      {{ form.categoria }}
+
+      <label>Valor</label>
+      {{ form.valor }}
+
+      <label>Data</label>
+      {{ form.data }}
+
+      <label>Observação</label>
+      {{ form.observacao }}
+
+      <button type="submit" class="btn-primary">
+         Salvar
+      </button>
+
+   </form>
+
+</div>
+
+{% endblock %}

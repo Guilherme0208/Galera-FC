@@ -1,0 +1,104 @@
+{% extends 'financeiro/base.html' %}
+
+{% block title %}
+Peladas | Galera FC
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+   <span>Peladas</span>
+   <h1>Gestão de Peladas</h1>
+   <p>Cadastre e acompanhe os rachões realizados.</p>
+</div>
+
+{% if messages %}
+   <div class="messages-area">
+      {% for message in messages %}
+         <div class="alert-message {{ message.tags }}">
+            {{ message }}
+         </div>
+      {% endfor %}
+   </div>
+{% endif %}
+
+<div class="section">
+
+   <div class="section-header">
+      <h2>Lista de Peladas</h2>
+
+      <a href="{% url 'financeiro:pelada_nova' %}" class="btn-primary">
+         + Nova Pelada
+      </a>
+   </div>
+
+   <table class="table">
+
+      <thead>
+         <tr>
+            <th>Data</th>
+            <th>Horário</th>
+            <th>Local</th>
+            <th>Valor Diária</th>
+            <th>Custo Quadra</th>
+            <th>Ações</th>
+         </tr>
+      </thead>
+
+      <tbody>
+
+         {% for pelada in peladas %}
+
+         <tr>
+            <td data-label="Data">{{ pelada.data|date:"d/m/Y" }}</td>
+
+            <td data-label="Horário">
+               {% if pelada.horario %}
+                  {{ pelada.horario }}
+               {% else %}
+                  -
+               {% endif %}
+            </td>
+
+            <td data-label="Local">{{ pelada.local }}</td>
+
+            <td data-label="Valor Diária">
+               R$ {{ pelada.valor_diaria }}
+            </td>
+
+            <td data-label="Custo Quadra">
+               R$ {{ pelada.custo_quadra }}
+            </td>
+
+            <td>
+               <a href="{% url 'financeiro:pelada_detalhe' pelada.id %}" class="btn-small">
+                  Ver Lista
+               </a>
+
+               <a href="{% url 'financeiro:pelada_editar' pelada.id %}" class="btn-small">
+                  Editar
+               </a>
+
+               <a href="{% url 'financeiro:pelada_excluir' pelada.id %}" class="btn-small danger">
+                  Excluir
+               </a>
+            </td>
+         </tr>
+
+         {% empty %}
+
+         <tr>
+            <td colspan="6" class="empty">
+               Nenhuma pelada cadastrada.
+            </td>
+         </tr>
+
+         {% endfor %}
+
+      </tbody>
+
+   </table>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,309 @@
+{% extends 'financeiro/base.html' %}
+
+{% block title %}
+Pelada {{ pelada.data|date:"d/m/Y" }}
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+   <span>Pelada</span>
+
+   <h1>
+      {{ pelada.data|date:"d/m/Y" }}
+   </h1>
+
+   <p>
+      {{ pelada.local }}
+   </p>
+</div>
+
+{% if messages %}
+   <div class="messages-area">
+      {% for message in messages %}
+         <div class="alert-message {{ message.tags }}">
+            {{ message }}
+         </div>
+      {% endfor %}
+   </div>
+{% endif %}
+
+<div class="section-header">
+   <a href="{% url 'financeiro:adicionar_presenca' pelada.id %}" class="btn-primary">
+      +Adicionar Jogador
+   </a>
+</div>
+
+<div class="cards">
+
+   <div class="card">
+      <span>Valor Diária</span>
+      <strong>R$ {{ pelada.valor_diaria }}</strong>
+   </div>
+
+   <div class="card">
+      <span>Custo Quadra</span>
+      <strong>R$ {{ pelada.custo_quadra }}</strong>
+   </div>
+
+</div>
+
+<div class="cards">
+   <div class="card">
+      <span>Receita Prevista</span>
+      <strong>R$ {{ receita_prevista }}</strong>
+   </div>
+
+   <div class="card">
+      <span>Receita Recebida</span>
+      <strong class="money-positive">R$ {{ receita_recebida }}</strong>
+   </div>
+
+   <div class="card">
+      <span>Pendências</span>
+      <strong class="money-negative">R$ {{ pendencias }}</strong>
+   </div>
+
+   <div class="card highlight">
+      <span>Saldo da Pelada</span>
+      <strong>R$ {{ saldo_pelada }}</strong>
+   </div>
+</div>
+
+<div class="section">
+
+   <div class="section-header">
+      <h2>🥅 Goleiros ({{ total_goleiros }})</h2>
+   </div>
+
+   <table class="table">
+
+      <thead>
+         <tr>
+            <th>#</th>
+            <th>Jogador</th>
+            <th>Pago</th>
+         </tr>
+      </thead>
+
+      <tbody>
+
+         {% for item in goleiros %}
+
+         <tr>
+            <td>{{ item.posicao_lista }}</td>
+            <td>{{ item.jogador.nome }}</td>
+
+            <td>
+               {% if item.pago %}
+                  <span class="badge-success">Pago</span>
+               {% else %}
+                  <span class="badge-danger">Pendente</span>
+               {% endif %}
+            </td>
+
+            <td>
+               <a
+                  href="{% url 'financeiro:editar_presenca' item.id %}"
+                  class="btn-small"
+               >
+                  Editar
+               </a>
+
+               <a
+                  href="{% url 'financeiro:remover_presenca' item.id %}"
+                  class="btn-small danger"
+               >
+                  Remover
+               </a>
+            </td>
+         </tr>
+
+         {% empty %}
+
+         <tr>
+            <td colspan="3" class="empty">
+               Nenhum goleiro cadastrado.
+            </td>
+         </tr>
+
+         {% endfor %}
+
+      </tbody>
+
+   </table>
+
+</div>
+
+<div class="section">
+
+   <div class="section-header">
+      <h2>⚽ Lista Principal ({{ total_lista }})</h2>
+   </div>
+
+   <table class="table">
+
+      <thead>
+         <tr>
+            <th>#</th>
+            <th>Jogador</th>
+            <th>Pago</th>
+         </tr>
+      </thead>
+
+      <tbody>
+
+         {% for item in lista_principal %}
+
+         <tr>
+            <td>{{ item.posicao_lista }}</td>
+
+            <td>{{ item.jogador.nome }}</td>
+
+            <td>
+               {% if item.pago %}
+                  <span class="badge-success">Pago</span>
+                  <a href="{% url 'financeiro:marcar_presenca_pendente' item.id %}" class="btn-small danger">Tornar Pendente</a>
+               {% else %}
+                  <span class="badge-danger">Pendente</span>
+                  
+                  <a href="{% url 'financeiro:registrar_pagamento' item.id %}" class="btn-small">Marcar Pago</a>
+               
+               {% endif %}
+            </td>
+
+            <td>
+               <a
+                  href="{% url 'financeiro:editar_presenca' item.id %}"
+                  class="btn-small"
+               >
+                  Editar
+               </a>
+
+               <a
+                  href="{% url 'financeiro:remover_presenca' item.id %}"
+                  class="btn-small danger"
+               >
+                  Remover
+               </a>
+            </td>
+
+         </tr>
+
+         {% empty %}
+
+         <tr>
+            <td colspan="3" class="empty">
+               Nenhum jogador na lista principal.
+            </td>
+         </tr>
+
+         {% endfor %}
+
+      </tbody>
+
+   </table>
+
+</div>
+
+<div class="section">
+
+   <div class="section-header">
+      <h2>🏠 Reservas de Casa ({{ total_reservas_casa }})</h2>
+   </div>
+
+   <table class="table">
+
+      <tbody>
+
+         {% for item in reservas_casa %}
+
+         <tr>
+            <td>{{ item.posicao_lista }}</td>
+            <td>{{ item.jogador.nome }}</td>
+
+            <td>
+               <a
+                  href="{% url 'financeiro:editar_presenca' item.id %}"
+                  class="btn-small"
+               >
+                  Editar
+               </a>
+
+               <a
+                  href="{% url 'financeiro:remover_presenca' item.id %}"
+                  class="btn-small danger"
+               >
+                  Remover
+               </a>
+            </td>
+         </tr>
+
+         
+
+         {% empty %}
+
+         <tr>
+            <td colspan="2" class="empty">
+               Nenhum reserva de casa.
+            </td>
+         </tr>
+
+         {% endfor %}
+
+      </tbody>
+
+   </table>
+
+</div>
+
+<div class="section">
+
+   <div class="section-header">
+      <h2>🚗 Reservas Visitantes ({{ total_reservas_visitantes }})</h2>
+   </div>
+
+   <table class="table">
+
+      <tbody>
+
+         {% for item in reservas_visitantes %}
+
+         <tr>
+            <td>{{ item.posicao_lista }}</td>
+            <td>{{ item.jogador.nome }}</td>
+
+            <td>
+               <a
+                  href="{% url 'financeiro:editar_presenca' item.id %}"
+                  class="btn-small"
+               >
+                  Editar
+               </a>
+
+               <a
+                  href="{% url 'financeiro:remover_presenca' item.id %}"
+                  class="btn-small danger"
+               >
+                  Remover
+               </a>
+            </td>
+         </tr>
+
+         {% empty %}
+
+         <tr>
+            <td colspan="2" class="empty">
+               Nenhum visitante na reserva.
+            </td>
+         </tr>
+
+         {% endfor %}
+
+      </tbody>
+
+   </table>
+
+</div>
+
+{% endblock %}

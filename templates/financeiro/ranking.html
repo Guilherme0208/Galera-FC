@@ -1,0 +1,65 @@
+{% extends 'financeiro/base.html' %}
+
+{% block title %}
+Ranking | Galera FC
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+   <span>Estatísticas</span>
+   <h1>Ranking de Participação</h1>
+   <p>Jogadores que mais participaram das peladas.</p>
+</div>
+
+<div class="section">
+
+   <table class="table">
+
+      <thead>
+         <tr>
+            <th>Posição</th>
+            <th>Jogador</th>
+            <th>Participações</th>
+         </tr>
+      </thead>
+
+      <tbody>
+
+         {% for jogador in ranking %}
+
+         <tr>
+
+            <td>
+               {{ forloop.counter }}º
+            </td>
+
+            <td>
+               <strong>
+                  {{ jogador.nome }}
+               </strong>
+            </td>
+
+            <td>
+               {{ jogador.total_presencas }}
+            </td>
+
+         </tr>
+
+         {% empty %}
+
+         <tr>
+            <td colspan="3" class="empty">
+               Nenhuma participação registrada.
+            </td>
+         </tr>
+
+         {% endfor %}
+
+      </tbody>
+
+   </table>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends 'financeiro/base.html' %}
+
+{% block title %}
+Jogador | Galera FC
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+   <span>Cadastro</span>
+   <h1>Jogador</h1>
+   <p>Cadastre ou edite os dados do jogador.</p>
+</div>
+
+<div class="section">
+   <form method="post" class="form">
+      {% csrf_token %}
+
+      <label>Nome</label>
+      {{ form.nome }}
+
+      <label>Telefone</label>
+      {{ form.telefone }}
+
+      <label>Tipo</label>
+      {{ form.tipo }}
+
+      <label>Valor Mensal</label>
+      {{ form.valor_mensal }}
+
+      <label>Desconto (%)</label>
+      {{ form.desconto_percentual }}
+
+      <label class="checkbox-label">
+         {{ form.ativo }}
+         Ativo
+      </label>
+
+      <button type="submit" class="btn-primary">
+         Salvar
+      </button>
+   </form>
+</div>
+
+{% endblock %}

@@ -1,0 +1,111 @@
+{% extends 'financeiro/base.html' %}
+
+{% block title %}
+Relatório Mensal | Galera FC
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+   <span>Relatórios</span>
+   <h1>Relatório Mensal</h1>
+   <p>Resumo financeiro mensal do rachão.</p>
+</div>
+
+<div class="section">
+   <form method="get" class="form">
+      <label>Mês</label>
+      <input type="number" name="mes" min="1" max="12" value="{{ mes }}">
+
+      <label>Ano</label>
+      <input type="number" name="ano" value="{{ ano }}">
+
+      <button type="submit" class="btn-primary">
+         Filtrar
+      </button>
+   </form>
+</div>
+
+<div class="cards">
+   <div class="card">
+      <span>Receitas Recebidas</span>
+      <strong class="money-positive">R$ {{ receitas }}</strong>
+   </div>
+
+   <div class="card">
+      <span>Pendências</span>
+      <strong class="money-negative">R$ {{ pendencias }}</strong>
+   </div>
+
+   <div class="card">
+      <span>Despesas</span>
+      <strong class="money-negative">R$ {{ despesas }}</strong>
+   </div>
+
+   <div class="card highlight">
+      <span>Saldo do Mês</span>
+      <strong
+      {% if saldo < 0 %}
+         class="money-negative"
+      {% else %}
+         class="money-positive"
+      {% endif %}
+      >
+         R$ {{ saldo }}
+      </strong>
+   </div>
+
+   <div class="card">
+      <span>Peladas Realizadas</span>
+      <strong>{{ peladas_realizadas }}</strong>
+   </div>
+
+   <div class="card">
+      <span>Jogadores Participantes</span>
+      <strong>{{ jogadores_participantes }}</strong>
+   </div>
+</div>
+
+<div class="section">
+   <div class="section-header">
+      <h2>Participações do Mês</h2>
+   </div>
+
+   <table class="table">
+      <thead>
+         <tr>
+            <th>Data</th>
+            <th>Jogador</th>
+            <th>Lista</th>
+            <th>Valor</th>
+            <th>Status</th>
+         </tr>
+      </thead>
+
+      <tbody>
+         {% for item in presencas %}
+         <tr>
+            <td>{{ item.pelada.data|date:"d/m/Y" }}</td>
+            <td><strong>{{ item.jogador.nome }}</strong></td>
+            <td>{{ item.get_tipo_lista_display }}</td>
+            <td>R$ {{ item.valor_cobrado }}</td>
+            <td>
+               {% if item.pago %}
+                  <span class="badge-success">Pago</span>
+               {% else %}
+                  <span class="badge-danger">Pendente</span>
+               {% endif %}
+            </td>
+         </tr>
+         {% empty %}
+         <tr>
+            <td colspan="5" class="empty">
+               Nenhuma participação encontrada neste mês.
+            </td>
+         </tr>
+         {% endfor %}
+      </tbody>
+   </table>
+</div>
+
+{% endblock %}

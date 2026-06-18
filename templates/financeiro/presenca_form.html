@@ -1,0 +1,55 @@
+{% extends 'financeiro/base.html' %}
+
+{% block title %}
+Adicionar Jogador | Galera FC
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+   <span>Lista de Presença</span>
+   <h1>Adicionar Jogador</h1>
+   <p>
+      Pelada de {{ pelada.data|date:"d/m/Y" }}
+      {% if pelada.local %}
+         - {{ pelada.local }}
+      {% endif %}
+   </p>
+</div>
+
+<div class="section">
+   <form method="post" class="form">
+      {% csrf_token %}
+
+      <label>Jogador</label>
+      {{ form.jogador }}
+
+      <label>Tipo de Lista</label>
+      {{ form.tipo_lista }}
+
+      <label>Posição na Lista</label>
+      {{ form.posicao_lista }}
+
+      <label>Valor Cobrado</label>
+      {{ form.valor_cobrado }}
+
+      <label class="checkbox-label">
+         {{ form.confirmado }}
+         Confirmado
+      </label>
+
+      <label class="checkbox-label">
+         {{ form.pago }}
+         Pago
+      </label>
+
+      <label>Observação</label>
+      {{ form.observacao }}
+
+      <button type="submit" class="btn-primary">
+         Adicionar
+      </button>
+   </form>
+</div>
+
+{% endblock %}

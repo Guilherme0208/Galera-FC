@@ -1,0 +1,47 @@
+{% extends 'financeiro/base.html' %}
+
+{% block title %}
+Pelada | Galera FC
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+   <span>Peladas</span>
+   <h1>Cadastro de Pelada</h1>
+   <p>Informe os dados do rachão.</p>
+</div>
+
+<div class="section">
+
+   <form method="post" class="form">
+
+      {% csrf_token %}
+
+      <label>Data</label>
+      {{ form.data }}
+
+      <label>Horário</label>
+      {{ form.horario }}
+
+      <label>Local</label>
+      {{ form.local }}
+
+      <label>Valor da Diária</label>
+      {{ form.valor_diaria }}
+
+      <label>Custo da Quadra</label>
+      {{ form.custo_quadra }}
+
+      <label>Observação</label>
+      {{ form.observacao }}
+
+      <button type="submit" class="btn-primary">
+         Salvar
+      </button>
+
+   </form>
+
+</div>
+
+{% endblock %}

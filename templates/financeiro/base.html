@@ -1,0 +1,57 @@
+{% load static %}
+
+<!doctype html>
+<html lang="pt-br">
+   <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+      <title>{% block title %}Galera FC{% endblock %}</title>
+
+      <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+   </head>
+
+   <body>
+      <header>
+         <div>
+            <div class="logo">GALERA FC</div>
+            <div class="subtitle">Gestão financeira do rachão</div>
+         </div>
+
+         <button class="menu-toggle" id="menuToggle">
+            ☰
+         </button>
+
+         <nav class="menu" id="menu">
+            <a href="{% url 'financeiro:dashboard' %}">Dashboard</a>
+            <a href="{% url 'financeiro:jogador_lista' %}">Jogadores</a>
+            <a href="{% url 'financeiro:pagamento_lista' %}">Pagamentos</a>
+            <a href="{% url 'financeiro:despesa_lista' %}">Despesas</a>
+            <a href="{% url 'financeiro:pelada_lista' %}">Peladas</a>
+            <a href="{% url 'financeiro:pendencias' %}">Pendências</a>
+            <a href="{% url 'financeiro:ranking_participacao' %}">Ranking</a>
+            <a href="{% url 'financeiro:relatorio_mensal' %}">Relatório</a>
+            <a href="{% url 'financeiro:configuracoes' %}">Configurações</a>
+
+            <form method="post" action="{% url 'logout' %}">
+               {% csrf_token %}
+               <button type="submit" class="menu-logout">Sair</button>
+            </form>
+         </nav>
+      </header>
+
+   <main>
+      {% block content %}
+      {% endblock %}
+   </main>
+
+<script>
+   const menuToggle = document.getElementById('menuToggle');
+   const menu = document.getElementById('menu');
+
+   menuToggle.addEventListener('click', function () {
+      menu.classList.toggle('active');
+   });
+</script>
+   </body>
+</html>

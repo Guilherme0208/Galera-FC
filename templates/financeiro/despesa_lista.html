@@ -1,0 +1,97 @@
+{% extends 'financeiro/base.html' %}
+
+{% block title %}
+Despesas | Galera FC
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+   <span>Financeiro</span>
+   <h1>Despesas</h1>
+   <p>Controle das despesas do grupo.</p>
+</div>
+
+<div class="section">
+
+   <div class="section-header">
+      <h2>Lista de Despesas</h2>
+
+      <a href="{% url 'financeiro:despesa_nova' %}" class="btn-primary">
+         + Nova Despesa
+      </a>
+   </div>
+
+   <table class="table">
+
+      <thead>
+         <tr>
+            <th>Data</th>
+            <th>Descrição</th>
+            <th>Categoria</th>
+            <th>Valor</th>
+            <th>Ações</th>
+         </tr>
+      </thead>
+
+      <tbody>
+
+         {% for despesa in despesas %}
+
+         <tr>
+
+            <td>
+               {{ despesa.data|date:"d/m/Y" }}
+            </td>
+
+            <td>
+               <strong>
+                  {{ despesa.descricao }}
+               </strong>
+            </td>
+
+            <td>
+               {{ despesa.get_categoria_display }}
+            </td>
+
+            <td class="money-negative">
+               R$ {{ despesa.valor }}
+            </td>
+
+            <td>
+
+               <a
+                  href="{% url 'financeiro:despesa_editar' despesa.id %}"
+                  class="btn-small"
+               >
+                  Editar
+               </a>
+
+               <a
+                  href="{% url 'financeiro:despesa_excluir' despesa.id %}"
+                  class="btn-small danger"
+               >
+                  Excluir
+               </a>
+
+            </td>
+
+         </tr>
+
+         {% empty %}
+
+         <tr>
+            <td colspan="5" class="empty">
+               Nenhuma despesa cadastrada.
+            </td>
+         </tr>
+
+         {% endfor %}
+
+      </tbody>
+
+   </table>
+
+</div>
+
+{% endblock %}
