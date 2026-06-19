@@ -18,6 +18,7 @@ urlpatterns = [
     path('peladas/<int:pk>/', views.pelada_detalhe, name='pelada_detalhe'),
     
     path('peladas/<int:pk>/adicionar-jogador/', views.adicionar_presenca, name='adicionar_presenca'),
+    path('peladas/<int:pk>/importar-whatsapp/', views.importar_lista_whatsapp, name='importar_lista_whatsapp'),
     
     path('presenca/excluir/<int:pk>/', views.remover_presenca, name='remover_presenca'),
     path('presenca/editar/<int:pk>/', views.editar_presenca, name='editar_presenca'),

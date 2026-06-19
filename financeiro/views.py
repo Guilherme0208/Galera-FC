@@ -5,10 +5,66 @@ from django.contrib.auth.decorators import login_required
 
 from datetime import date
 
-from .forms import (JogadorForm, PeladaForm, PresencaPeladaForm, DespesaForm, PagamentoForm, ConfiguracaoSistemaForm)
+from .forms import (JogadorForm, PeladaForm, PresencaPeladaForm, DespesaForm, PagamentoForm, ConfiguracaoSistemaForm, ImportarListaWhatsAppForm)
 
 # Create your views here.
 from .models import (Jogador, Pagamento, Despesa, Pelada, PresencaPelada, ConfiguracaoSistema)
+
+@login_required
+def processar_lista_whatsapp(texto):
+    linhas = texto.splitlines()
+
+    tipo_atual = None
+
+    mapa_tipos = {
+        '_GOLEIROS_': 'GOLEIRO',
+        'GOLEIROS': 'GOLEIRO',
+
+        '_LISTA_': 'LISTA',
+        'LISTA': 'LISTA',
+
+        '_RESERVAS DE CASA_': 'RESERVA_CASA',
+        'RESERVAS DE CASA': 'RESERVA_CASA',
+
+        '_RESERVAS VISITANTES_': 'RESERVA_VISITANTE',
+        'RESERVAS VISITANTES': 'RESERVA_VISITANTE',
+    }
+
+    resultado = []
+
+    for linha in linhas:
+
+        linha = linha.strip()
+
+        if not linha:
+            continue
+
+        linha_maiuscula = linha.upper()
+
+        if linha_maiuscula in mapa_tipos:
+            tipo_atual = mapa_tipos[linha_maiuscula]
+            continue
+
+        if '=' not in linha:
+            continue
+
+        if not tipo_atual:
+            continue
+
+        posicao_texto, nome = linha.split('=', 1)
+
+        try:
+            posicao = int(posicao_texto.strip())
+        except ValueError:
+            continue
+
+        resultado.append({
+            'nome': nome.strip(),
+            'tipo_lista': tipo_atual,
+            'posicao_lista': posicao
+        })
+
+    return resultado
 
 @login_required
 def dashboard(request):
@@ -782,5 +838,124 @@ def configuracoes(request):
         'financeiro/configuracoes.html',
         {
             'form': form
+        }
+    )
+    
+@login_required
+def importar_lista_whatsapp(request, pk):
+    pelada = get_object_or_404(Pelada, pk=pk)
+
+    if request.method == 'POST':
+        form = ImportarListaWhatsAppForm(request.POST)
+
+        if form.is_valid():
+            texto = form.cleaned_data['texto']
+            linhas = texto.splitlines()
+
+            tipo_atual = None
+            criados = 0
+            nao_encontrados = []
+
+            mapa_tipos = {
+                '_GOLEIROS_': 'GOLEIRO',
+                'GOLEIROS': 'GOLEIRO',
+
+                '_LISTA_': 'LISTA',
+                'LISTA': 'LISTA',
+
+                '_RESERVAS DE CASA_': 'RESERVA_CASA',
+                'RESERVAS DE CASA': 'RESERVA_CASA',
+
+                '_RESERVAS VISITANTES_': 'RESERVA_VISITANTE',
+                'RESERVAS VISITANTES': 'RESERVA_VISITANTE',
+            }
+
+            for linha in linhas:
+                linha = linha.strip()
+
+                if not linha:
+                    continue
+
+                linha_maiuscula = linha.upper()
+
+                if linha_maiuscula in mapa_tipos:
+                    tipo_atual = mapa_tipos[linha_maiuscula]
+                    continue
+
+                if '=' not in linha or not tipo_atual:
+                    continue
+
+                posicao_texto, nome = linha.split('=', 1)
+
+                posicao_texto = posicao_texto.strip()
+                nome = nome.strip()
+
+                if not posicao_texto or not nome:
+                    continue
+
+                try:
+                    posicao = int(posicao_texto)
+                except ValueError:
+                    continue
+
+                jogador = Jogador.objects.filter(
+                    nome__iexact=nome
+                ).first()
+
+                if not jogador:
+                    jogador = Jogador.objects.create(
+                        nome=nome,
+                        tipo='DIARISTA',
+                        valor_mensal=0,
+                        desconto_percentual=0,
+                        ativo=True
+                    )
+
+                ja_existe = PresencaPelada.objects.filter(
+                    pelada=pelada,
+                    jogador=jogador
+                ).exists()
+
+                if ja_existe:
+                    continue
+
+                PresencaPelada.objects.create(
+                    pelada=pelada,
+                    jogador=jogador,
+                    tipo_lista=tipo_atual,
+                    posicao_lista=posicao,
+                    confirmado=True,
+                    pago=False,
+                    valor_cobrado=pelada.valor_diaria
+                )
+
+                criados += 1
+
+            if criados:
+                messages.success(
+                    request,
+                    f'{criados} jogadores importados com sucesso.'
+                )
+
+            if nao_encontrados:
+                messages.error(
+                    request,
+                    'Jogadores não encontrados: ' + ', '.join(nao_encontrados)
+                )
+
+            return redirect(
+                'financeiro:pelada_detalhe',
+                pk=pelada.id
+            )
+
+    else:
+        form = ImportarListaWhatsAppForm()
+
+    return render(
+        request,
+        'financeiro/importar_lista_whatsapp.html',
+        {
+            'form': form,
+            'pelada': pelada
         }
     )

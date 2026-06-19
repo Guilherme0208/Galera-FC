@@ -132,3 +132,14 @@ class ConfiguracaoSistemaForm(forms.ModelForm):
             'limite_reservas_casa',
             'limite_reservas_visitantes',
         ]
+        
+class ImportarListaWhatsAppForm(forms.Form):
+    texto = forms.CharField(
+        widget=forms.Textarea(
+            attrs={
+                'rows': 18,
+                'placeholder': 'Cole aqui a lista do WhatsApp...'
+            }
+        ),
+        label='Lista do WhatsApp'
+    )

@@ -1,0 +1,33 @@
+{% extends 'financeiro/base.html' %}
+
+{% block title %}
+Importar Lista WhatsApp | Galera FC
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+   <span>Importação</span>
+   <h1>Importar Lista do WhatsApp</h1>
+   <p>
+      Pelada de {{ pelada.data|date:"d/m/Y" }}
+      {% if pelada.local %}
+         - {{ pelada.local }}
+      {% endif %}
+   </p>
+</div>
+
+<div class="section">
+   <form method="post" class="form">
+      {% csrf_token %}
+
+      <label>Lista do WhatsApp</label>
+      {{ form.texto }}
+
+      <button type="submit" class="btn-primary">
+         Importar Lista
+      </button>
+   </form>
+</div>
+
+{% endblock %}

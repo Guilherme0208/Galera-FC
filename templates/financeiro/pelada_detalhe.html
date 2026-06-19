@@ -32,6 +32,13 @@ Pelada {{ pelada.data|date:"d/m/Y" }}
    <a href="{% url 'financeiro:adicionar_presenca' pelada.id %}" class="btn-primary">
       +Adicionar Jogador
    </a>
+
+   <a
+      href="{% url 'financeiro:importar_lista_whatsapp' pelada.id %}"
+      class="btn-primary"
+   >
+      Importar WhatsApp
+   </a>
 </div>
 
 <div class="cards">
