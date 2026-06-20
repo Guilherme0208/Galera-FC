@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 # Create your models here.
 class Jogador(models.Model):
@@ -178,6 +179,7 @@ class PresencaPelada(models.Model):
 
     confirmado = models.BooleanField(default=True)
     pago = models.BooleanField(default=False)
+    isento = models.BooleanField(default=False)
 
     valor_cobrado = models.DecimalField(
         max_digits=10,
@@ -221,3 +223,20 @@ class ConfiguracaoSistema(models.Model):
 
     def __str__(self):
         return self.nome_grupo
+    
+class LogSistema(models.Model):
+    usuario = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
+    
+    acao = models.CharField(max_length=100)
+    
+    descricao = models.TextField()
+    
+    criado_em = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return f'{self.usuario} - {self.acao}'

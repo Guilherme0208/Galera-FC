@@ -73,6 +73,7 @@ class PresencaPeladaForm(forms.ModelForm):
             'posicao_lista',
             'confirmado',
             'pago',
+            'isento',
             'valor_cobrado',
             'observacao',
         ]

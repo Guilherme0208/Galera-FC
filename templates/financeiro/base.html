@@ -32,6 +32,7 @@
             <a href="{% url 'financeiro:ranking_participacao' %}">Ranking</a>
             <a href="{% url 'financeiro:relatorio_mensal' %}">Relatório</a>
             <a href="{% url 'financeiro:configuracoes' %}">Configurações</a>
+            <a href="{% url 'financeiro:log_sistema' %}">Logs</a>
 
             <form method="post" action="{% url 'logout' %}">
                {% csrf_token %}

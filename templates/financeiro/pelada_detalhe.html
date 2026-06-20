@@ -67,6 +67,16 @@ Pelada {{ pelada.data|date:"d/m/Y" }}
    </div>
 
    <div class="card">
+      <span>Pagantes</span>
+      <strong>{{ total_pagantes }}</strong>
+   </div>
+
+   <div class="card">
+      <span>Isentos</span>
+      <strong>{{ total_isentos }}</strong>
+   </div>
+
+   <div class="card">
       <span>Pendências</span>
       <strong class="money-negative">R$ {{ pendencias }}</strong>
    </div>
@@ -89,6 +99,7 @@ Pelada {{ pelada.data|date:"d/m/Y" }}
          <tr>
             <th>#</th>
             <th>Jogador</th>
+            <th>Valor</th>
             <th>Pago</th>
          </tr>
       </thead>
@@ -102,10 +113,53 @@ Pelada {{ pelada.data|date:"d/m/Y" }}
             <td>{{ item.jogador.nome }}</td>
 
             <td>
-               {% if item.pago %}
-                  <span class="badge-success">Pago</span>
+               {% if item.isento %}
+                  R$ 0,00
                {% else %}
-                  <span class="badge-danger">Pendente</span>
+                  R$ {{ item.valor_cobrado }}
+               {% endif %}
+            </td>
+
+            <td>
+               {% if item.isento %}
+
+                  <span class="badge-success">
+                     Isento
+                  </span>
+
+                  <a
+                     href="{% url 'financeiro:remover_isencao' item.id %}"
+                     class="btn-small"
+                  >
+                     Remover Isenção
+                  </a>
+
+               {% elif item.pago %}
+
+                  <span class="badge-success">
+                     Pago
+                  </span>
+
+               {% else %}
+
+                  <span class="badge-danger">
+                     Pendente
+                  </span>
+
+                  <a
+                     href="{% url 'financeiro:marcar_presenca_paga' item.id %}"
+                     class="btn-small"
+                  >
+                     Marcar Pago
+                  </a>
+
+                  <a
+                     href="{% url 'financeiro:marcar_isento' item.id %}"
+                     class="btn-small"
+                  >
+                     Isentar
+                  </a>
+
                {% endif %}
             </td>
 
@@ -154,6 +208,7 @@ Pelada {{ pelada.data|date:"d/m/Y" }}
          <tr>
             <th>#</th>
             <th>Jogador</th>
+            <th>Valor</th>
             <th>Pago</th>
          </tr>
       </thead>
@@ -168,14 +223,53 @@ Pelada {{ pelada.data|date:"d/m/Y" }}
             <td>{{ item.jogador.nome }}</td>
 
             <td>
-               {% if item.pago %}
-                  <span class="badge-success">Pago</span>
-                  <a href="{% url 'financeiro:marcar_presenca_pendente' item.id %}" class="btn-small danger">Tornar Pendente</a>
+               {% if item.isento %}
+                  R$ 0,00
                {% else %}
-                  <span class="badge-danger">Pendente</span>
-                  
-                  <a href="{% url 'financeiro:registrar_pagamento' item.id %}" class="btn-small">Marcar Pago</a>
-               
+                  R$ {{ item.valor_cobrado }}
+               {% endif %}
+            </td>
+
+            <td>
+               {% if item.isento %}
+
+                  <span class="badge-success">
+                     Isento
+                  </span>
+
+                  <a
+                     href="{% url 'financeiro:remover_isencao' item.id %}"
+                     class="btn-small"
+                  >
+                     Remover Isenção
+                  </a>
+
+               {% elif item.pago %}
+
+                  <span class="badge-success">
+                     Pago
+                  </span>
+
+               {% else %}
+
+                  <span class="badge-danger">
+                     Pendente
+                  </span>
+
+                  <a
+                     href="{% url 'financeiro:marcar_presenca_paga' item.id %}"
+                     class="btn-small"
+                  >
+                     Marcar Pago
+                  </a>
+
+                  <a
+                     href="{% url 'financeiro:marcar_isento' item.id %}"
+                     class="btn-small"
+                  >
+                     Isentar
+                  </a>
+
                {% endif %}
             </td>
 

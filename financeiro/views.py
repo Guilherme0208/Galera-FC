@@ -8,7 +8,7 @@ from datetime import date
 from .forms import (JogadorForm, PeladaForm, PresencaPeladaForm, DespesaForm, PagamentoForm, ConfiguracaoSistemaForm, ImportarListaWhatsAppForm)
 
 # Create your views here.
-from .models import (Jogador, Pagamento, Despesa, Pelada, PresencaPelada, ConfiguracaoSistema)
+from .models import (Jogador, Pagamento, Despesa, Pelada, PresencaPelada, ConfiguracaoSistema, LogSistema)
 
 @login_required
 def processar_lista_whatsapp(texto):
@@ -158,7 +158,13 @@ def jogador_novo(request):
 
         if form.is_valid():
 
-            form.save()
+            jogador = form.save()
+            
+            registrar_log(
+                request,
+                'Adição',
+                f'{jogador.nome} foi adicionado como novo jogador na pelada.'
+            )
 
             return redirect(
                 'financeiro:jogador_lista'
@@ -198,6 +204,12 @@ def jogador_editar(request, pk):
             return redirect(
                 'financeiro:jogador_lista'
             )
+            
+    registrar_log(
+        request,
+        'Edição',
+        f'{jogador.nome} foi editado no sistema.'
+    )
 
     return render(
         request,
@@ -214,8 +226,16 @@ def jogador_excluir(request, pk):
         Jogador,
         pk=pk
     )
+    
+    nome_jogador = jogador.nome
 
     jogador.delete()
+    
+    registrar_log(
+    request,
+    'Exclusão',
+    f'{nome_jogador} foi foi excluido da pelada.'
+)
 
     return redirect(
         'financeiro:jogador_lista'
@@ -243,7 +263,13 @@ def pelada_nova(request):
 
         if form.is_valid():
 
-            form.save()
+            pelada = form.save()
+            
+            registrar_log(
+                request,
+                'Cadastro de pelada',
+                f'Nova pelada criada para o dia {pelada.data}.'
+            )
 
             return redirect(
                 'financeiro:pelada_lista'
@@ -293,10 +319,18 @@ def pelada_detalhe(request, pk):
     ).order_by('posicao_lista')
     
     todas_presencas = pelada.presencas.all()
+    total_isentos = todas_presencas.filter(
+        isento=True
+    ).count()
     
-    receita_prevista = sum(item.valor_cobrado for item in todas_presencas)
+    total_pagantes = todas_presencas.filter(
+        isento=False,
+        valor_cobrado__gt=0
+    ).count()
     
-    receita_recebida = sum(item.valor_cobrado for item in todas_presencas if item.pago)
+    receita_prevista = sum(item.valor_cobrado for item in todas_presencas if not item.isento)
+    
+    receita_recebida = sum(item.valor_cobrado for item in todas_presencas if item.pago and not item.isento)
     
     pendencias = receita_prevista - receita_recebida
     
@@ -324,6 +358,8 @@ def pelada_detalhe(request, pk):
             'total_lista': total_lista,
             'total_reservas_casa': total_reservas_casa,
             'total_reservas_visitantes': total_reservas_visitantes,
+            'total_isentos': total_isentos,
+            'total_pagantes': total_pagantes,
             
             'receita_prevista': receita_prevista,
             'receita_recebida': receita_recebida,
@@ -508,6 +544,50 @@ def remover_presenca(request, pk):
         'financeiro:pelada_detalhe',
         pk=pelada_id
     )
+    
+@login_required
+def marcar_isento(request, pk):
+    presenca = get_object_or_404(
+        PresencaPelada,
+        pk=pk
+    )
+    
+    presenca.isento = True
+    presenca.pago = False
+    presenca.valor_cobrado = 0
+    presenca.save()
+    
+    registrar_log(
+        request,
+        'Isenção',
+        f'{presenca.jogador.nome} foi marcado como isento na pelada {presenca.pelada.data}.'
+    )
+    
+    return redirect(
+        'financeiro:pelada_detalhe',
+        pk=presenca.pelada.id
+    )
+
+@login_required
+def remover_isencao(request, pk):
+    presenca = get_object_or_404(
+        PresencaPelada,
+        pk=pk
+    )
+    
+    presenca.isento = False
+    presenca.save()
+    
+    registrar_log(
+        request,
+        'remover isenção',
+        f'{presenca.jogador.nome} foi removido como isento na pelada {presenca.pelada.data}.'
+    )
+    
+    return redirect(
+        'financeiro:pelada_detalhe',
+        pk=presenca.pelada.id
+    )
 
 @login_required    
 def marcar_presenca_paga(request, pk):
@@ -547,6 +627,7 @@ def pendencias(request):
         'jogador'
     ).filter(
         pago=False,
+        isento=False,
         valor_cobrado__gt=0
     ).order_by(
         'pelada__data',
@@ -957,5 +1038,27 @@ def importar_lista_whatsapp(request, pk):
         {
             'form': form,
             'pelada': pelada
+        }
+    )
+
+@login_required    
+def registrar_log(request, acao, descricao):
+    LogSistema.objects.create(
+        usuario=request.user if request.user.is_authenticated else None,
+        acao=acao,
+        descricao=descricao
+    )
+    
+@login_required
+def log_sistema(request):
+    logs = LogSistema.objects.select_related(
+        'usuario'
+    ).order_by('-criado_em')[:200]
+
+    return render(
+        request,
+        'financeiro/log_sistema.html',
+        {
+            'logs': logs
         }
     )

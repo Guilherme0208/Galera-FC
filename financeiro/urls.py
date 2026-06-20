@@ -24,6 +24,8 @@ urlpatterns = [
     path('presenca/editar/<int:pk>/', views.editar_presenca, name='editar_presenca'),
     path('presenca/<int:pk>/marcar-paga/', views.marcar_presenca_paga, name='marcar_presenca_paga'),
     path('presenca/<int:pk>/marcar-pendente/', views.marcar_presenca_pendente, name='marcar_presenca_pendente'),
+    path('presenca/<int:pk>/isentar/', views.marcar_isento, name='marcar_isento'),
+    path('presenca/<int:pk>/remover-isencao/', views.remover_isencao, name='remover_isencao'),
     
     path('pendencias/', views.pendencias, name='pendencias'),
     
@@ -38,6 +40,8 @@ urlpatterns = [
     
     path('pagamentos', views.pagamento_lista, name='pagamento_lista'),
     path('pagamentos/registrar/<int:pk>/', views.registrar_pagamento, name='registrar_pagamento'),
+    
+    path('logs/', views.log_sistema, name='log_sistema'),
     
     path('configuracoes/', views.configuracoes, name='configuracoes'),
 ]    
