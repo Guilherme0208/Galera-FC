@@ -250,6 +250,10 @@ Pelada {{ pelada.data|date:"d/m/Y" }}
                      Pago
                   </span>
 
+                  <a href="{% url 'financeiro:marcar_presenca_pendente' item.id %}" class="btn-small">
+                     Marcar Pendente
+                  </a>
+
                {% else %}
 
                   <span class="badge-danger">
